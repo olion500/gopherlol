@@ -53,8 +53,8 @@ build: ## build the application
 	go build -o bin/$(NAME) .
 
 .PHONY: clean
-clean: ## clean build artifacts
-	rm -rf bin/
+clean: ## clean build artifacts and logs
+	rm -rf bin/ usage.log
 
 .PHONY: tidy
 tidy: ## tidy up go modules
@@ -75,6 +75,12 @@ check: ## run all checks (format, vet, test with coverage)
 	go fmt ./...
 	go vet ./...
 	go test -cover ./...
+
+##@ Analytics
+.PHONY: dashboard
+dashboard: ## open analytics dashboard in browser
+	@echo "Opening dashboard at http://localhost:$(PORT)/dashboard"
+	@open "http://localhost:$(PORT)/dashboard" 2>/dev/null || echo "Dashboard URL: http://localhost:$(PORT)/dashboard"
 
 ##@ Release
 .PHONY: release-build

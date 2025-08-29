@@ -2,14 +2,19 @@ package main
 
 import (
 	"fmt"
+	"github.com/markusdosch/gopherlol/internal/analytics"
 	"github.com/markusdosch/gopherlol/internal/config"
+	"github.com/markusdosch/gopherlol/internal/dashboard"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-var commandRegistry *config.CommandRegistry
+var (
+	commandRegistry *config.CommandRegistry
+	analyticsSystem *analytics.Analytics
+)
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
@@ -20,6 +25,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	// Handle help/list commands
 	if cmdName == "list" || cmdName == "help" {
+		analyticsSystem.LogCommandUsage("help", q, r.UserAgent(), r.RemoteAddr, false, false, "")
 		generateHelpPage(w)
 		return
 	}
@@ -31,6 +37,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		defaultCmd := commandRegistry.GetDefaultCommand()
 		if defaultCmd != nil {
 			// Use default command with full query as search term
+			analyticsSystem.LogCommandUsage(defaultCmd.Name, q, r.UserAgent(), r.RemoteAddr, true, false, "")
 			query := url.QueryEscape(q)
 			targetURL, err := config.ExecuteURL(defaultCmd.URL, query)
 			if err != nil {
@@ -42,6 +49,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			// No default command configured => fall back to Google
+			analyticsSystem.LogCommandUsage("google-fallback", q, r.UserAgent(), r.RemoteAddr, true, false, "")
 			fallbackURL := fmt.Sprintf("https://www.google.com/?q=%s", url.QueryEscape(q))
 			http.Redirect(w, r, fallbackURL, http.StatusSeeOther)
 			return
@@ -60,6 +68,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			if len(parts) >= 3 {
 				query = url.QueryEscape(parts[2])
 			}
+			analyticsSystem.LogCommandUsage(cmd.Name, q, r.UserAgent(), r.RemoteAddr, false, true, subCmd.Name)
 			var err error
 			targetURL, err = config.ExecuteURL(subCmd.URL, query)
 			if err != nil {
@@ -70,6 +79,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			// No subcommand found, treat everything after command as query
 			query = url.QueryEscape(strings.Join(parts[1:], " "))
+			analyticsSystem.LogCommandUsage(cmd.Name, q, r.UserAgent(), r.RemoteAddr, false, false, "")
 			var err error
 			targetURL, err = config.ExecuteURL(cmd.URL, query)
 			if err != nil {
@@ -82,10 +92,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		// No arguments, just the command
 		if cmd.RequiresQuery {
 			// Command requires query but none provided, fallback to google
-			fallbackURL := fmt.Sprintf("https://www.google.com/#q=%s", url.QueryEscape(q))
+			analyticsSystem.LogCommandUsage("google-fallback", q, r.UserAgent(), r.RemoteAddr, true, false, "")
+			fallbackURL := fmt.Sprintf("https://www.google.com/?q=%s", url.QueryEscape(q))
 			http.Redirect(w, r, fallbackURL, http.StatusSeeOther)
 			return
 		}
+		analyticsSystem.LogCommandUsage(cmd.Name, q, r.UserAgent(), r.RemoteAddr, false, false, "")
 		var err error
 		targetURL, err = config.ExecuteURL(cmd.URL, "")
 		if err != nil {
@@ -161,9 +173,21 @@ func main() {
 	// Initialize command registry
 	commandRegistry = config.NewCommandRegistry(commandConfig)
 
+	// Initialize analytics system
+	analyticsSystem = analytics.NewAnalytics("usage.log")
+
+	// Initialize dashboard
+	dashboardHandler := dashboard.NewDashboardHandler(analyticsSystem)
+
 	log.Printf("Loaded %d commands from %s", len(commandConfig.Commands), configFile)
 
+	// Route handlers
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/dashboard", dashboardHandler.HandleDashboard)
+	http.HandleFunc("/api/stats", dashboardHandler.HandleStatsAPI)
+	http.HandleFunc("/api/overall", dashboardHandler.HandleOverallStatsAPI)
+
 	log.Printf("Starting server on :8080")
+	log.Printf("Dashboard available at: http://localhost:8080/dashboard")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

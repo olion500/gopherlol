@@ -1,14 +1,19 @@
 package main
 
 import (
+	"github.com/markusdosch/gopherlol/internal/analytics"
 	"github.com/markusdosch/gopherlol/internal/config"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 )
 
 func setupTestRegistry() {
+	// Initialize analytics for testing
+	analyticsSystem = analytics.NewAnalytics("test_usage.log")
+	
 	testConfig := &config.CommandConfig{
 		Commands: []config.Command{
 			{
@@ -273,6 +278,7 @@ func TestHandler_URLEncoding(t *testing.T) {
 
 func TestHandler_FallbackToDefault(t *testing.T) {
 	setupTestRegistry()
+	defer os.Remove("test_usage.log") // Clean up test log file
 
 	req := httptest.NewRequest("GET", "/?q=nonexistent%20query", nil)
 	w := httptest.NewRecorder()
