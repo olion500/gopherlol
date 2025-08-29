@@ -75,15 +75,6 @@ check: ## run all checks (format, vet, test with coverage)
 	go vet ./...
 	go test -cover ./...
 
-##@ Utilities
-.PHONY: open
-open: ## open the application in browser
-	open "http://localhost:$(PORT)"
-
-.PHONY: status
-status: ## check if application is running
-	@curl -s http://localhost:$(PORT)/\?q\=help > /dev/null && echo "Application is running" || echo "Application is not running"
-
 ##@ Release
 .PHONY: release-build
 release-build: ## build for multiple platforms
