@@ -111,6 +111,13 @@
       ]
     },
     {
+      "name": "jira",
+      "aliases": ["j"],
+      "description": "Open Jira ticket by key",
+      "url": "https://cupixrnd.atlassian.net/browse/{{.Query}}",
+      "requiresQuery": true
+    },
+    {
       "name": "youtube",
       "aliases": ["yt"],
       "description": "Search YouTube",
