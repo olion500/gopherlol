@@ -50,11 +50,12 @@ run: ## run the application
 
 .PHONY: build
 build: ## build the application
-	go build -o bin/$(NAME) .
+	go build -o $(NAME) .
 
 .PHONY: clean
 clean: ## clean build artifacts and logs
-	rm -rf bin/ usage.log
+	rm -f $(NAME) usage.log
+	rm -rf dist/
 
 .PHONY: tidy
 tidy: ## tidy up go modules
@@ -78,21 +79,14 @@ check: ## run all checks (format, vet, test with coverage)
 
 ##@ Analytics
 .PHONY: analytics
-analytics: ## show command usage analytics in terminal
-	@go run cmd/analytics/main.go
-
-.PHONY: analytics-overall
-analytics-overall: ## show overall analytics statistics
-	@go run cmd/analytics/main.go -overall
-
-.PHONY: analytics-help
-analytics-help: ## show analytics command help
-	@go run cmd/analytics/main.go -help
+analytics: ## show command usage analytics (add -overall for all-time stats)
+	@go run cmd/analytics/main.go $(ARGS)
 
 ##@ Release
 .PHONY: release-build
 release-build: ## build for multiple platforms
-	GOOS=linux GOARCH=amd64 go build -o bin/$(NAME)-linux-amd64 .
-	GOOS=darwin GOARCH=amd64 go build -o bin/$(NAME)-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build -o bin/$(NAME)-darwin-arm64 .
-	GOOS=windows GOARCH=amd64 go build -o bin/$(NAME)-windows-amd64.exe .
+	mkdir -p dist
+	GOOS=linux GOARCH=amd64 go build -o dist/$(NAME)-linux-amd64 .
+	GOOS=darwin GOARCH=amd64 go build -o dist/$(NAME)-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -o dist/$(NAME)-darwin-arm64 .
+	GOOS=windows GOARCH=amd64 go build -o dist/$(NAME)-windows-amd64.exe .

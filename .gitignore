@@ -4,6 +4,10 @@
 commands.json
 usage.log
 
+# Build artifacts
+gopherlol
+dist/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
