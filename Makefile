@@ -15,11 +15,10 @@ build: ## build the application
 
 .PHONY: clean
 clean: ## clean build artifacts
-	rm -rf bin/
+	rm -rf bin/ coverage.out coverage.html
 
-.PHONY: install-deps
-install-deps: ## install dependencies
-	go mod download
+.PHONY: tidy
+tidy: ## tidy up go modules
 	go mod tidy
 
 ##@ Testing
@@ -50,18 +49,10 @@ fmt: ## format code
 vet: ## run go vet
 	go vet ./...
 
-.PHONY: lint
-lint: ## run golangci-lint (requires installation)
-	golangci-lint run
-
 .PHONY: check
 check: fmt vet test ## run all checks (format, vet, test)
 
 ##@ Utilities
-.PHONY: dev
-dev: ## run in development mode with auto-reload (requires air)
-	air
-
 .PHONY: open
 open: ## open the application in browser
 	open "http://localhost:$(PORT)"
@@ -69,14 +60,6 @@ open: ## open the application in browser
 .PHONY: status
 status: ## check if application is running
 	@curl -s http://localhost:$(PORT)/\?q\=help > /dev/null && echo "Application is running" || echo "Application is not running"
-
-.PHONY: docker-build
-docker-build: ## build docker image
-	docker build -t $(NAME) .
-
-.PHONY: docker-run
-docker-run: ## run docker container
-	docker run -p $(PORT):$(PORT) --name $(NAME) $(NAME)
 
 ##@ Release
 .PHONY: release-build
