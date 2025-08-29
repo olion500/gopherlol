@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/markusdosch/gopherlol/internal/analytics"
-	"github.com/markusdosch/gopherlol/internal/config"
+	"github.com/dominikoh/gopherlol/internal/analytics"
+	"github.com/dominikoh/gopherlol/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"os"

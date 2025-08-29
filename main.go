@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/markusdosch/gopherlol/internal/analytics"
-	"github.com/markusdosch/gopherlol/internal/config"
+	"github.com/dominikoh/gopherlol/internal/analytics"
+	"github.com/dominikoh/gopherlol/internal/config"
 	"log"
 	"net/http"
 	"net/url"

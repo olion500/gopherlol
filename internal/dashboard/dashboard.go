@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/markusdosch/gopherlol/internal/analytics"
+	"github.com/dominikoh/gopherlol/internal/analytics"
 )
 
 // DashboardHandler handles dashboard-related HTTP requests
