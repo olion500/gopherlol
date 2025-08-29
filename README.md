@@ -18,10 +18,9 @@ Transform your browser's address bar into a powerful command center for quick na
 ```bash
 # Run the application
 make run
-# or
-go run .
 
-# Then add `http://localhost:8080/?q=%s` as a search engine to your browser
+# Get detailed browser setup instructions
+make usage
 ```
 
 ### Using asdf (recommended)
@@ -43,8 +42,9 @@ make run                    # Run with latest Go
 ## 🛠️ Development
 
 ```bash
-# All available commands
-make help
+# Get started
+make help          # Show all available commands
+make usage         # Show browser setup instructions
 
 # Common operations
 make run           # Start the server

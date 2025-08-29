@@ -4,6 +4,44 @@ PORT=8080
 help: ## show help message
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\033[36m\033[0m\n"} /^[$$()% 0-9a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+.PHONY: usage
+usage: ## show browser setup instructions
+	@echo ""
+	@echo "\033[1m🔍 gopherlol Browser Setup Instructions\033[0m"
+	@echo ""
+	@echo "\033[36m1. Start the server:\033[0m"
+	@echo "   make run"
+	@echo ""
+	@echo "\033[36m2. Add search engine to your browser:\033[0m"
+	@echo ""
+	@echo "\033[33m   Chrome:\033[0m"
+	@echo "   • Go to Settings → Search engine → Manage search engines"
+	@echo "   • Click 'Add' next to 'Other search engines'"
+	@echo "   • Search engine: gopherlol"
+	@echo "   • Keyword: gl (or any shortcut you prefer)"
+	@echo "   • URL: http://localhost:$(PORT)/?q=%s"
+	@echo "   • Click 'Add' and optionally 'Make default'"
+	@echo ""
+	@echo "\033[33m   Firefox:\033[0m"
+	@echo "   • Go to Settings → Search → Search Shortcuts"
+	@echo "   • Click 'Add' and enter the same details as Chrome"
+	@echo ""
+	@echo "\033[33m   Safari:\033[0m"
+	@echo "   • Go to Safari → Settings → Search"
+	@echo "   • Click 'Manage Search Engines' and add custom engine"
+	@echo ""
+	@echo "\033[36m3. Test it:\033[0m"
+	@echo "   • Type in address bar: gl help"
+	@echo "   • Try: gl g hello world"
+	@echo "   • Try: gl gh pr typescript"
+	@echo ""
+	@echo "\033[36m4. View all commands:\033[0m"
+	@echo "   • Visit: http://localhost:$(PORT)/?q=help"
+	@echo "   • Or type in browser: gl help"
+	@echo ""
+	@echo "\033[32m✨ Pro tip: Set 'gl' as your keyword for quick access!\033[0m"
+	@echo ""
+
 ##@ Development
 .PHONY: run
 run: ## run the application
