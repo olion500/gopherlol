@@ -1,13 +1,60 @@
 package main
 
 import (
+	"github.com/markusdosch/gopherlol/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
+func setupTestRegistry() {
+	testConfig := &config.CommandConfig{
+		Commands: []config.Command{
+			{
+				Name:        "google",
+				Aliases:     []string{"g", "search"},
+				Description: "Search Google",
+				URL:         "https://www.google.com/#q={{.Query}}",
+				RequiresQuery: true,
+			},
+			{
+				Name:        "stackoverflow",
+				Aliases:     []string{"so", "stack"},
+				Description: "Search Stack Overflow",
+				URL:         "https://stackoverflow.com/search?q={{.Query}}",
+				RequiresQuery: true,
+			},
+			{
+				Name:        "author",
+				Aliases:     []string{},
+				Description: "Go to author's website",
+				URL:         "https://www.markusdosch.com",
+				RequiresQuery: false,
+			},
+			{
+				Name:        "github",
+				Aliases:     []string{"gh"},
+				Description: "GitHub operations",
+				URL:         "https://github.com/search?q={{.Query}}",
+				RequiresQuery: false,
+				Subcommands: []config.Subcommand{
+					{
+						Name:        "pr",
+						Aliases:     []string{"pull"},
+						Description: "GitHub pull requests",
+						URL:         "https://github.com/search?type=pullrequests&q={{.Query}}",
+					},
+				},
+			},
+		},
+	}
+	commandRegistry = config.NewCommandRegistry(testConfig)
+}
+
 func TestHandler_Help(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=help", nil)
 	w := httptest.NewRecorder()
 
@@ -29,6 +76,8 @@ func TestHandler_Help(t *testing.T) {
 }
 
 func TestHandler_List(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=list", nil)
 	w := httptest.NewRecorder()
 
@@ -56,6 +105,8 @@ func TestHandler_List(t *testing.T) {
 }
 
 func TestHandler_GoogleCommand(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=g%20test%20query", nil)
 	w := httptest.NewRecorder()
 
@@ -73,6 +124,8 @@ func TestHandler_GoogleCommand(t *testing.T) {
 }
 
 func TestHandler_StackOverflowCommand(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=so%20golang%20testing", nil)
 	w := httptest.NewRecorder()
 
@@ -90,6 +143,8 @@ func TestHandler_StackOverflowCommand(t *testing.T) {
 }
 
 func TestHandler_AuthorCommand(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=author", nil)
 	w := httptest.NewRecorder()
 
@@ -107,6 +162,8 @@ func TestHandler_AuthorCommand(t *testing.T) {
 }
 
 func TestHandler_FallbackToGoogle(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=nonexistent%20command%20test", nil)
 	w := httptest.NewRecorder()
 
@@ -124,6 +181,8 @@ func TestHandler_FallbackToGoogle(t *testing.T) {
 }
 
 func TestHandler_EmptyQuery(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=", nil)
 	w := httptest.NewRecorder()
 
@@ -141,6 +200,8 @@ func TestHandler_EmptyQuery(t *testing.T) {
 }
 
 func TestHandler_NoQuery(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 
@@ -158,6 +219,8 @@ func TestHandler_NoQuery(t *testing.T) {
 }
 
 func TestHandler_CaseInsensitive(t *testing.T) {
+	setupTestRegistry()
+	
 	testCases := []struct {
 		query    string
 		expected string
@@ -190,6 +253,8 @@ func TestHandler_CaseInsensitive(t *testing.T) {
 }
 
 func TestHandler_URLEncoding(t *testing.T) {
+	setupTestRegistry()
+	
 	req := httptest.NewRequest("GET", "/?q=g%20hello%20world%20%26%20special%20chars%21", nil)
 	w := httptest.NewRecorder()
 
