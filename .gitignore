@@ -1,5 +1,9 @@
 .idea
 
+# User-specific configuration
+commands.json
+usage.log
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

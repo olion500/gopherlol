@@ -16,6 +16,14 @@ Transform your browser's address bar into a powerful command center for quick na
 ## 🚀 Quick Start
 
 ```bash
+# Clone and setup
+git clone https://github.com/dominikoh/gopherlol.git
+cd gopherlol
+
+# Copy and customize configuration
+cp commands.json.sample commands.json
+# Edit commands.json to add your custom URLs and commands
+
 # Run the application
 make run
 
@@ -76,11 +84,12 @@ make check         # Run format, vet, and tests
   - `logs` (`log`) - Log search
   - `metrics` (`metric`) - Metrics explorer
   - `dashboard` (`dash`) - Dashboard search
+- **jira** (`j`) - Open Jira tickets by key (customize URL in config)
 - **gmail** (`mail`, `email`) - Gmail search
 
 ## 🔧 Adding Custom Commands
 
-Simply edit `commands.json`:
+Edit your `commands.json` file (created from `commands.json.sample`):
 
 ```json
 {

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -166,6 +167,12 @@ func main() {
 	configFile := "commands.json"
 	commandConfig, err := config.LoadConfig(configFile)
 	if err != nil {
+		if _, err := os.Stat(configFile); os.IsNotExist(err) {
+			log.Printf("Configuration file '%s' not found.", configFile)
+			log.Printf("Please copy 'commands.json.sample' to 'commands.json' and customize it:")
+			log.Printf("  cp commands.json.sample commands.json")
+			log.Printf("Then edit commands.json to configure your custom commands and URLs.")
+		}
 		log.Fatalf("Failed to load command configuration: %v", err)
 	}
 
