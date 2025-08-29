@@ -104,11 +104,14 @@ Then restart the server - no code changes needed!
 
 ## 🌐 Browser Setup
 
-### Chrome
-1. Go to Settings → Search engine → Manage search engines
-2. Add new search engine:
+> 💡 **Quick Setup**: Run `make usage` for detailed, step-by-step instructions for all browsers!
+
+### Chrome (and Chromium-based browsers)
+1. Open: `chrome://settings/searchEngines`
+2. Click 'Add' next to 'Other search engines'
+3. Add new search engine:
    - **Search engine**: gopherlol
-   - **Keyword**: gopherlol (or any shortcut you prefer)
+   - **Keyword**: gl (or any shortcut you prefer)
    - **URL**: `http://localhost:8080/?q=%s`
 
 ### Other Browsers
