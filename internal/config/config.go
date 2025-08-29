@@ -1,12 +1,12 @@
 package config
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 	"text/template"
-	"bytes"
 )
 
 // CommandConfig represents the JSON configuration structure
@@ -16,12 +16,12 @@ type CommandConfig struct {
 
 // Command represents a single command configuration
 type Command struct {
-	Name         string       `json:"name"`
-	Aliases      []string     `json:"aliases"`
-	Description  string       `json:"description"`
-	URL          string       `json:"url"`
-	RequiresQuery bool        `json:"requiresQuery"`
-	Subcommands  []Subcommand `json:"subcommands,omitempty"`
+	Name          string       `json:"name"`
+	Aliases       []string     `json:"aliases"`
+	Description   string       `json:"description"`
+	URL           string       `json:"url"`
+	RequiresQuery bool         `json:"requiresQuery"`
+	Subcommands   []Subcommand `json:"subcommands,omitempty"`
 }
 
 // Subcommand represents a subcommand configuration
@@ -39,8 +39,8 @@ type TemplateData struct {
 
 // CommandRegistry manages command lookup and execution
 type CommandRegistry struct {
-	commands map[string]*Command
-	aliases  map[string]*Command
+	commands    map[string]*Command
+	aliases     map[string]*Command
 	subcommands map[string]map[string]*Subcommand
 }
 
@@ -70,10 +70,10 @@ func NewCommandRegistry(config *CommandConfig) *CommandRegistry {
 	// Register commands and aliases
 	for i := range config.Commands {
 		cmd := &config.Commands[i]
-		
+
 		// Register main command name
 		registry.commands[strings.ToLower(cmd.Name)] = cmd
-		
+
 		// Register aliases
 		for _, alias := range cmd.Aliases {
 			registry.aliases[strings.ToLower(alias)] = cmd
@@ -85,14 +85,14 @@ func NewCommandRegistry(config *CommandConfig) *CommandRegistry {
 			for j := range cmd.Subcommands {
 				sub := &cmd.Subcommands[j]
 				subMap[strings.ToLower(sub.Name)] = sub
-				
+
 				// Register subcommand aliases
 				for _, alias := range sub.Aliases {
 					subMap[strings.ToLower(alias)] = sub
 				}
 			}
 			registry.subcommands[strings.ToLower(cmd.Name)] = subMap
-			
+
 			// Also register subcommands under aliases
 			for _, alias := range cmd.Aliases {
 				registry.subcommands[strings.ToLower(alias)] = subMap
@@ -106,15 +106,15 @@ func NewCommandRegistry(config *CommandConfig) *CommandRegistry {
 // FindCommand looks up a command by name or alias
 func (r *CommandRegistry) FindCommand(name string) *Command {
 	name = strings.ToLower(name)
-	
+
 	if cmd, exists := r.commands[name]; exists {
 		return cmd
 	}
-	
+
 	if cmd, exists := r.aliases[name]; exists {
 		return cmd
 	}
-	
+
 	return nil
 }
 
@@ -122,13 +122,13 @@ func (r *CommandRegistry) FindCommand(name string) *Command {
 func (r *CommandRegistry) FindSubcommand(cmdName, subName string) *Subcommand {
 	cmdName = strings.ToLower(cmdName)
 	subName = strings.ToLower(subName)
-	
+
 	if subMap, exists := r.subcommands[cmdName]; exists {
 		if sub, exists := subMap[subName]; exists {
 			return sub
 		}
 	}
-	
+
 	return nil
 }
 
@@ -141,7 +141,7 @@ func ExecuteURL(urlTemplate, query string) (string, error) {
 
 	var buf bytes.Buffer
 	data := TemplateData{Query: query}
-	
+
 	if err := tmpl.Execute(&buf, data); err != nil {
 		return "", fmt.Errorf("failed to execute URL template: %w", err)
 	}
@@ -153,13 +153,13 @@ func ExecuteURL(urlTemplate, query string) (string, error) {
 func (r *CommandRegistry) ListCommands() []Command {
 	var commands []Command
 	seen := make(map[string]bool)
-	
+
 	for _, cmd := range r.commands {
 		if !seen[cmd.Name] {
 			commands = append(commands, *cmd)
 			seen[cmd.Name] = true
 		}
 	}
-	
+
 	return commands
 }

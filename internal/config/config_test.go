@@ -22,7 +22,7 @@ func TestLoadConfig(t *testing.T) {
 
 	tmpDir := t.TempDir()
 	configFile := filepath.Join(tmpDir, "test_commands.json")
-	
+
 	if err := os.WriteFile(configFile, []byte(configContent), 0644); err != nil {
 		t.Fatalf("Failed to write test config file: %v", err)
 	}
@@ -54,17 +54,17 @@ func TestNewCommandRegistry(t *testing.T) {
 	config := &CommandConfig{
 		Commands: []Command{
 			{
-				Name:        "google",
-				Aliases:     []string{"g", "search"},
-				Description: "Search Google",
-				URL:         "https://google.com/search?q={{.Query}}",
+				Name:          "google",
+				Aliases:       []string{"g", "search"},
+				Description:   "Search Google",
+				URL:           "https://google.com/search?q={{.Query}}",
 				RequiresQuery: true,
 			},
 			{
-				Name:        "github",
-				Aliases:     []string{"gh"},
-				Description: "GitHub",
-				URL:         "https://github.com",
+				Name:          "github",
+				Aliases:       []string{"gh"},
+				Description:   "GitHub",
+				URL:           "https://github.com",
 				RequiresQuery: false,
 				Subcommands: []Subcommand{
 					{

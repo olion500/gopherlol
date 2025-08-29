@@ -17,7 +17,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Parse command and arguments
 	parts := strings.SplitN(q, " ", 3)
 	cmdName := strings.ToLower(parts[0])
-	
+
 	// Handle help/list commands
 	if cmdName == "list" || cmdName == "help" {
 		generateHelpPage(w)
@@ -89,7 +89,7 @@ func generateHelpPage(w http.ResponseWriter) {
 	var html strings.Builder
 	html.WriteString("<h1>gopherlol command list</h1>")
 	html.WriteString("<ul>")
-	
+
 	for _, cmd := range commands {
 		aliases := ""
 		if len(cmd.Aliases) > 0 {
@@ -147,7 +147,7 @@ func main() {
 	commandRegistry = config.NewCommandRegistry(commandConfig)
 
 	log.Printf("Loaded %d commands from %s", len(commandConfig.Commands), configFile)
-	
+
 	http.HandleFunc("/", handler)
 	log.Printf("Starting server on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
