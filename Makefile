@@ -15,7 +15,7 @@ build: ## build the application
 
 .PHONY: clean
 clean: ## clean build artifacts
-	rm -rf bin/ coverage.out coverage.html
+	rm -rf bin/
 
 .PHONY: tidy
 tidy: ## tidy up go modules
@@ -27,30 +27,15 @@ test: ## run tests
 	go test ./...
 
 .PHONY: test-verbose
-test-verbose: ## run tests with verbose output
-	go test -v ./...
-
-.PHONY: test-coverage
-test-coverage: ## run tests with coverage
-	go test -cover ./...
-
-.PHONY: test-coverage-html
-test-coverage-html: ## run tests with coverage and generate HTML report
-	go test -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out -o coverage.html
-	@echo "Coverage report generated at coverage.html"
+test-verbose: ## run tests with verbose output and coverage
+	go test -v -cover ./...
 
 ##@ Code Quality
-.PHONY: fmt
-fmt: ## format code
-	go fmt ./...
-
-.PHONY: vet
-vet: ## run go vet
-	go vet ./...
-
 .PHONY: check
-check: fmt vet test ## run all checks (format, vet, test)
+check: ## run all checks (format, vet, test with coverage)
+	go fmt ./...
+	go vet ./...
+	go test -cover ./...
 
 ##@ Utilities
 .PHONY: open
