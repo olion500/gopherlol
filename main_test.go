@@ -15,8 +15,9 @@ func setupTestRegistry() {
 				Name:          "google",
 				Aliases:       []string{"g", "search"},
 				Description:   "Search Google",
-				URL:           "https://www.google.com/#q={{.Query}}",
+				URL:           "https://www.google.com/?q={{.Query}}",
 				RequiresQuery: true,
+				Default:       true,
 			},
 			{
 				Name:          "stackoverflow",
@@ -117,7 +118,7 @@ func TestHandler_GoogleCommand(t *testing.T) {
 	}
 
 	location := w.Header().Get("Location")
-	expectedURL := "https://www.google.com/#q=test+query"
+	expectedURL := "https://www.google.com/?q=test+query"
 	if location != expectedURL {
 		t.Errorf("Expected Location header %q, got %q", expectedURL, location)
 	}
@@ -174,7 +175,7 @@ func TestHandler_FallbackToGoogle(t *testing.T) {
 	}
 
 	location := w.Header().Get("Location")
-	expectedURL := "https://www.google.com/#q=nonexistent+command+test"
+	expectedURL := "https://www.google.com/?q=nonexistent+command+test"
 	if location != expectedURL {
 		t.Errorf("Expected Location header %q, got %q", expectedURL, location)
 	}
@@ -193,7 +194,7 @@ func TestHandler_EmptyQuery(t *testing.T) {
 	}
 
 	location := w.Header().Get("Location")
-	expectedURL := "https://www.google.com/#q="
+	expectedURL := "https://www.google.com/?q="
 	if location != expectedURL {
 		t.Errorf("Expected Location header %q, got %q", expectedURL, location)
 	}
@@ -212,7 +213,7 @@ func TestHandler_NoQuery(t *testing.T) {
 	}
 
 	location := w.Header().Get("Location")
-	expectedURL := "https://www.google.com/#q="
+	expectedURL := "https://www.google.com/?q="
 	if location != expectedURL {
 		t.Errorf("Expected Location header %q, got %q", expectedURL, location)
 	}
@@ -225,8 +226,8 @@ func TestHandler_CaseInsensitive(t *testing.T) {
 		query    string
 		expected string
 	}{
-		{"g%20test", "https://www.google.com/#q=test"},
-		{"G%20test", "https://www.google.com/#q=test"},
+		{"g%20test", "https://www.google.com/?q=test"},
+		{"G%20test", "https://www.google.com/?q=test"},
 		{"author", "https://www.markusdosch.com"},
 		{"Author", "https://www.markusdosch.com"},
 		{"so%20test", "https://stackoverflow.com/search?q=test"},
@@ -267,5 +268,24 @@ func TestHandler_URLEncoding(t *testing.T) {
 	location := w.Header().Get("Location")
 	if !strings.Contains(location, "hello+world+%26+special+chars%21") {
 		t.Errorf("Expected URL to be properly encoded, got %q", location)
+	}
+}
+
+func TestHandler_FallbackToDefault(t *testing.T) {
+	setupTestRegistry()
+
+	req := httptest.NewRequest("GET", "/?q=nonexistent%20query", nil)
+	w := httptest.NewRecorder()
+
+	handler(w, req)
+
+	if w.Code != http.StatusSeeOther {
+		t.Errorf("Expected status %d, got %d", http.StatusSeeOther, w.Code)
+	}
+
+	location := w.Header().Get("Location")
+	expectedURL := "https://www.google.com/?q=nonexistent+query"
+	if location != expectedURL {
+		t.Errorf("Expected Location header %q, got %q", expectedURL, location)
 	}
 }

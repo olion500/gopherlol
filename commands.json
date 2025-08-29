@@ -4,8 +4,9 @@
       "name": "google",
       "aliases": ["g", "search"],
       "description": "Search Google",
-      "url": "https://www.google.com/#q={{.Query}}",
-      "requiresQuery": true
+      "url": "https://www.google.com/?q={{.Query}}",
+      "requiresQuery": true,
+      "default": true
     },
     {
       "name": "stackoverflow",

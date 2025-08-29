@@ -59,6 +59,7 @@ func TestNewCommandRegistry(t *testing.T) {
 				Description:   "Search Google",
 				URL:           "https://google.com/search?q={{.Query}}",
 				RequiresQuery: true,
+				Default:       true,
 			},
 			{
 				Name:          "github",
@@ -109,6 +110,14 @@ func TestNewCommandRegistry(t *testing.T) {
 
 	if sub := registry.FindSubcommand("github", "nonexistent"); sub != nil {
 		t.Error("Found non-existent subcommand")
+	}
+
+	// Test default command
+	defaultCmd := registry.GetDefaultCommand()
+	if defaultCmd == nil {
+		t.Error("Expected to find default command")
+	} else if defaultCmd.Name != "google" {
+		t.Errorf("Expected default command to be 'google', got %q", defaultCmd.Name)
 	}
 }
 

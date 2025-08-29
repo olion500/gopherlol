@@ -27,10 +27,25 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Try to find the command
 	cmd := commandRegistry.FindCommand(cmdName)
 	if cmd == nil {
-		// Command not found => fall back to google
-		fallbackURL := fmt.Sprintf("https://www.google.com/#q=%s", url.QueryEscape(q))
-		http.Redirect(w, r, fallbackURL, http.StatusSeeOther)
-		return
+		// Command not found => fall back to default command or Google
+		defaultCmd := commandRegistry.GetDefaultCommand()
+		if defaultCmd != nil {
+			// Use default command with full query as search term
+			query := url.QueryEscape(q)
+			targetURL, err := config.ExecuteURL(defaultCmd.URL, query)
+			if err != nil {
+				log.Printf("Error executing default command URL template: %v", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, targetURL, http.StatusSeeOther)
+			return
+		} else {
+			// No default command configured => fall back to Google
+			fallbackURL := fmt.Sprintf("https://www.google.com/?q=%s", url.QueryEscape(q))
+			http.Redirect(w, r, fallbackURL, http.StatusSeeOther)
+			return
+		}
 	}
 
 	// Check for subcommands

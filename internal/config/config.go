@@ -21,6 +21,7 @@ type Command struct {
 	Description   string       `json:"description"`
 	URL           string       `json:"url"`
 	RequiresQuery bool         `json:"requiresQuery"`
+	Default       bool         `json:"default,omitempty"`
 	Subcommands   []Subcommand `json:"subcommands,omitempty"`
 }
 
@@ -39,9 +40,10 @@ type TemplateData struct {
 
 // CommandRegistry manages command lookup and execution
 type CommandRegistry struct {
-	commands    map[string]*Command
-	aliases     map[string]*Command
-	subcommands map[string]map[string]*Subcommand
+	commands       map[string]*Command
+	aliases        map[string]*Command
+	subcommands    map[string]map[string]*Subcommand
+	defaultCommand *Command
 }
 
 // LoadConfig loads command configuration from a JSON file
@@ -62,9 +64,10 @@ func LoadConfig(filename string) (*CommandConfig, error) {
 // NewCommandRegistry creates a new command registry from configuration
 func NewCommandRegistry(config *CommandConfig) *CommandRegistry {
 	registry := &CommandRegistry{
-		commands:    make(map[string]*Command),
-		aliases:     make(map[string]*Command),
-		subcommands: make(map[string]map[string]*Subcommand),
+		commands:       make(map[string]*Command),
+		aliases:        make(map[string]*Command),
+		subcommands:    make(map[string]map[string]*Subcommand),
+		defaultCommand: nil,
 	}
 
 	// Register commands and aliases
@@ -77,6 +80,11 @@ func NewCommandRegistry(config *CommandConfig) *CommandRegistry {
 		// Register aliases
 		for _, alias := range cmd.Aliases {
 			registry.aliases[strings.ToLower(alias)] = cmd
+		}
+
+		// Set default command if specified
+		if cmd.Default {
+			registry.defaultCommand = cmd
 		}
 
 		// Register subcommands if any
@@ -130,6 +138,11 @@ func (r *CommandRegistry) FindSubcommand(cmdName, subName string) *Subcommand {
 	}
 
 	return nil
+}
+
+// GetDefaultCommand returns the configured default command
+func (r *CommandRegistry) GetDefaultCommand() *Command {
+	return r.defaultCommand
 }
 
 // ExecuteURL processes the URL template with the given query
