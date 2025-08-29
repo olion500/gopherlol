@@ -77,10 +77,17 @@ check: ## run all checks (format, vet, test with coverage)
 	go test -cover ./...
 
 ##@ Analytics
-.PHONY: dashboard
-dashboard: ## open analytics dashboard in browser
-	@echo "Opening dashboard at http://localhost:$(PORT)/dashboard"
-	@open "http://localhost:$(PORT)/dashboard" 2>/dev/null || echo "Dashboard URL: http://localhost:$(PORT)/dashboard"
+.PHONY: analytics
+analytics: ## show command usage analytics in terminal
+	@go run cmd/analytics/main.go
+
+.PHONY: analytics-overall
+analytics-overall: ## show overall analytics statistics
+	@go run cmd/analytics/main.go -overall
+
+.PHONY: analytics-help
+analytics-help: ## show analytics command help
+	@go run cmd/analytics/main.go -help
 
 ##@ Release
 .PHONY: release-build

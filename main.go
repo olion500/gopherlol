@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/markusdosch/gopherlol/internal/analytics"
 	"github.com/markusdosch/gopherlol/internal/config"
-	"github.com/markusdosch/gopherlol/internal/dashboard"
 	"log"
 	"net/http"
 	"net/url"
@@ -176,18 +175,12 @@ func main() {
 	// Initialize analytics system
 	analyticsSystem = analytics.NewAnalytics("usage.log")
 
-	// Initialize dashboard
-	dashboardHandler := dashboard.NewDashboardHandler(analyticsSystem)
-
 	log.Printf("Loaded %d commands from %s", len(commandConfig.Commands), configFile)
 
 	// Route handlers
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/dashboard", dashboardHandler.HandleDashboard)
-	http.HandleFunc("/api/stats", dashboardHandler.HandleStatsAPI)
-	http.HandleFunc("/api/overall", dashboardHandler.HandleOverallStatsAPI)
 
 	log.Printf("Starting server on :8080")
-	log.Printf("Dashboard available at: http://localhost:8080/dashboard")
+	log.Printf("View analytics: make analytics")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
