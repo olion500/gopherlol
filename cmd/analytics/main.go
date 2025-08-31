@@ -142,11 +142,11 @@ func showDateRangeStats(analyticsSystem *analytics.Analytics, startDate, endDate
 		if dayStats.UniqueUsers > maxUsers {
 			maxUsers = dayStats.UniqueUsers
 		}
-		
+
 		for cmd, count := range dayStats.Commands {
 			allCommands[cmd] += count
 		}
-		
+
 		// Collect duration data (simplified aggregation)
 		for cmd, avgDur := range dayStats.AvgDuration {
 			if avgDur > 0 {
@@ -203,17 +203,17 @@ func showOverallStats(analyticsSystem *analytics.Analytics, topCount int) {
 
 func showStatsOverview(stats *analytics.DayStats) {
 	totalTimeHours := float64(stats.TotalTime) / (1000 * 60 * 60)
-	
+
 	fmt.Printf("%s┌─ Overview ─────────────────────────────────────┐%s\n", ColorDim, ColorReset)
 	fmt.Printf("│ %s📊 Total Usage:%s     %-25d │\n", ColorGreen, ColorReset, stats.TotalUsage)
 	fmt.Printf("│ %s👥 Unique Users:%s    %-25d │\n", ColorCyan, ColorReset, stats.UniqueUsers)
 	fmt.Printf("│ %s⏱️  Total Time:%s     %-22.1fh │\n", ColorYellow, ColorReset, totalTimeHours)
-	
+
 	if len(stats.TopCommands) > 0 {
 		topCmd := stats.TopCommands[0]
 		fmt.Printf("│ %s🔝 Top Command:%s     %-15s (%d uses) │\n", ColorPurple, ColorReset, topCmd.Command, topCmd.Count)
 	}
-	
+
 	fmt.Printf("%s└───────────────────────────────────────────────┘%s\n\n", ColorDim, ColorReset)
 }
 
@@ -240,7 +240,7 @@ func showTopCommands(commands []analytics.CommandCount, avgDurations map[string]
 	for i, cmd := range commands {
 		percentage := float64(cmd.Count) / float64(total) * 100
 		avgDur := avgDurations[cmd.Command]
-		
+
 		// Color coding for ranking
 		rankColor := ColorWhite
 		switch i {
@@ -251,7 +251,7 @@ func showTopCommands(commands []analytics.CommandCount, avgDurations map[string]
 		case 2:
 			rankColor = ColorRed + ColorBold
 		}
-		
+
 		durationStr := "-"
 		if avgDur > 0 {
 			if avgDur < 1000 {
@@ -260,11 +260,11 @@ func showTopCommands(commands []analytics.CommandCount, avgDurations map[string]
 				durationStr = fmt.Sprintf("%.1fs", avgDur/1000)
 			}
 		}
-		
-		fmt.Printf("│ %s%-15s%s %7d %11.1f%% %11s │\n", 
+
+		fmt.Printf("│ %s%-15s%s %7d %11.1f%% %11s │\n",
 			rankColor, cmd.Command, ColorReset, cmd.Count, percentage, durationStr)
 	}
-	
+
 	fmt.Printf("%s└─────────────────────────────────────────────────────────────┘%s\n", ColorDim, ColorReset)
 }
 

@@ -10,26 +10,26 @@ import (
 
 // CommandUsage represents a single command usage event
 type CommandUsage struct {
-	Command     string    `json:"command"`
-	Query       string    `json:"query,omitempty"`
-	Timestamp   time.Time `json:"timestamp"`
-	UserAgent   string    `json:"user_agent,omitempty"`
-	RemoteAddr  string    `json:"remote_addr,omitempty"`
-	Duration    int64     `json:"duration_ms,omitempty"` // Time until next command
-	IsDefault   bool      `json:"is_default"`            // Whether this was a fallback to default
-	IsSubcommand bool     `json:"is_subcommand"`
-	Subcommand  string    `json:"subcommand,omitempty"`
+	Command      string    `json:"command"`
+	Query        string    `json:"query,omitempty"`
+	Timestamp    time.Time `json:"timestamp"`
+	UserAgent    string    `json:"user_agent,omitempty"`
+	RemoteAddr   string    `json:"remote_addr,omitempty"`
+	Duration     int64     `json:"duration_ms,omitempty"` // Time until next command
+	IsDefault    bool      `json:"is_default"`            // Whether this was a fallback to default
+	IsSubcommand bool      `json:"is_subcommand"`
+	Subcommand   string    `json:"subcommand,omitempty"`
 }
 
 // DayStats represents aggregated stats for a single day
 type DayStats struct {
-	Date         string                    `json:"date"`
-	TotalUsage   int                      `json:"total_usage"`
-	Commands     map[string]int           `json:"commands"`
-	AvgDuration  map[string]float64       `json:"avg_duration"`
-	TotalTime    int64                    `json:"total_time_ms"`
-	UniqueUsers  int                      `json:"unique_users"`
-	TopCommands  []CommandCount           `json:"top_commands"`
+	Date        string             `json:"date"`
+	TotalUsage  int                `json:"total_usage"`
+	Commands    map[string]int     `json:"commands"`
+	AvgDuration map[string]float64 `json:"avg_duration"`
+	TotalTime   int64              `json:"total_time_ms"`
+	UniqueUsers int                `json:"unique_users"`
+	TopCommands []CommandCount     `json:"top_commands"`
 }
 
 // CommandCount represents command usage count for ranking
@@ -172,7 +172,7 @@ func (a *Analytics) GetDateRange(startDate, endDate string) ([]*DayStats, error)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	end, err := time.Parse("2006-01-02", endDate)
 	if err != nil {
 		return nil, err

@@ -85,8 +85,9 @@ flowchart TD
 git clone https://github.com/dominikoh/gopherlol.git
 cd gopherlol
 
-# Copy sample configuration
+# Copy sample configuration and customize it
 cp commands.json.sample commands.json
+# 📝 Edit commands.json to add your company's tools, personal shortcuts, etc.
 
 # Start the server
 make run
@@ -121,8 +122,14 @@ make run                    # Run with latest Go
 
 #### Customize Your Commands
 ```bash
-# Edit commands.json to add your company's tools
+# commands.json is gitignored - safe to customize with your personal/company URLs
 vim commands.json
+
+# Add your Jira instance, Slack workspace, internal tools, etc.
+# Examples:
+# - Change "yourcompany.atlassian.net" to your actual Jira URL
+# - Update Slack workspace from "yourworkspace" to your team's
+# - Add your monitoring dashboards, internal wikis, etc.
 
 # Restart server to load new commands
 make run
@@ -164,7 +171,7 @@ make run
 <tr>
 <td><code>j PROJ-123</code></td>
 <td>Open specific Jira ticket</td>
-<td>https://company.atlassian.net/browse/PROJ-123</td>
+<td>https://yourcompany.atlassian.net/browse/PROJ-123</td>
 </tr>
 </table>
 

@@ -4,23 +4,9 @@
       "name": "google",
       "aliases": ["g", "search"],
       "description": "Search Google",
-      "url": "https://www.google.com/?q={{.Query}}",
+      "url": "https://www.google.com/search?q={{.Query}}",
       "requiresQuery": true,
       "default": true
-    },
-    {
-      "name": "stackoverflow",
-      "aliases": ["so", "stack"],
-      "description": "Search Stack Overflow",
-      "url": "https://stackoverflow.com/search?q={{.Query}}",
-      "requiresQuery": true
-    },
-    {
-      "name": "author",
-      "aliases": [],
-      "description": "Go to author's website",
-      "url": "https://www.markusdosch.com",
-      "requiresQuery": false
     },
     {
       "name": "github",
@@ -52,69 +38,20 @@
           "aliases": ["users"],
           "description": "Search GitHub users",
           "url": "https://github.com/search?type=users&q={{.Query}}"
+        },
+        {
+          "name": "trends",
+          "aliases": ["tr", "trend"],
+          "description": "GitHub trending repositories",
+          "url": "https://github.com/trending"
         }
       ]
     },
     {
-      "name": "datadog",
-      "aliases": ["dd"],
-      "description": "Datadog operations",
-      "url": "https://app.datadoghq.com/",
-      "requiresQuery": false,
-      "subcommands": [
-        {
-          "name": "logs",
-          "aliases": ["log"],
-          "description": "Open Datadog logs",
-          "url": "https://app.datadoghq.com/logs?query={{.Query}}"
-        },
-        {
-          "name": "metrics",
-          "aliases": ["metric"],
-          "description": "Open Datadog metrics",
-          "url": "https://app.datadoghq.com/metric/explorer?exp_metric={{.Query}}"
-        },
-        {
-          "name": "dashboard",
-          "aliases": ["dash"],
-          "description": "Search Datadog dashboards",
-          "url": "https://app.datadoghq.com/dashboard/lists?q={{.Query}}"
-        }
-      ]
-    },
-    {
-      "name": "gmail",
-      "aliases": ["mail", "email"],
-      "description": "Gmail operations",
-      "url": "https://mail.google.com/mail/#search/{{.Query}}",
-      "requiresQuery": false
-    },
-    {
-      "name": "vscode",
-      "aliases": ["code", "vs"],
-      "description": "Visual Studio Code operations",
-      "url": "https://marketplace.visualstudio.com/search?term={{.Query}}",
-      "requiresQuery": false,
-      "subcommands": [
-        {
-          "name": "extensions",
-          "aliases": ["ext", "extension"],
-          "description": "Search VS Code extensions",
-          "url": "https://marketplace.visualstudio.com/search?target=VSCode&category=All%20categories&sortBy=Relevance&term={{.Query}}"
-        },
-        {
-          "name": "themes",
-          "aliases": ["theme"],
-          "description": "Search VS Code themes",
-          "url": "https://marketplace.visualstudio.com/search?target=VSCode&category=Themes&term={{.Query}}"
-        }
-      ]
-    },
-    {
-      "name": "jira",
-      "aliases": ["j"],
-      "description": "Open Jira ticket by key (customize URL for your instance)",
-      "url": "https://yourcompany.atlassian.net/browse/{{.Query}}",
+      "name": "stackoverflow",
+      "aliases": ["so", "stack"],
+      "description": "Search Stack Overflow",
+      "url": "https://stackoverflow.com/search?q={{.Query}}",
       "requiresQuery": true
     },
     {
@@ -130,6 +67,58 @@
       "description": "Search Twitter/X",
       "url": "https://twitter.com/search?q={{.Query}}",
       "requiresQuery": true
+    },
+    {
+      "name": "gmail",
+      "aliases": ["mail", "email", "gm"],
+      "description": "Gmail search",
+      "url": "https://mail.google.com/mail/#search/{{.Query}}",
+      "requiresQuery": false
+    },
+    {
+      "name": "calendar",
+      "aliases": ["cal"],
+      "description": "Google Calendar",
+      "url": "https://calendar.google.com/calendar/u/0/r",
+      "requiresQuery": false
+    },
+    {
+      "name": "jira",
+      "aliases": ["j"],
+      "description": "Open Jira ticket by key (customize URL for your instance)",
+      "url": "https://yourcompany.atlassian.net/browse/{{.Query}}",
+      "requiresQuery": true,
+      "subcommands": [
+        {
+          "name": "board",
+          "aliases": ["kanban"],
+          "description": "Open your Jira board",
+          "url": "https://yourcompany.atlassian.net/jira/software/projects/YOUR_PROJECT/boards/1",
+          "requiresQuery": false
+        }
+      ]
+    },
+    {
+      "name": "slack",
+      "aliases": ["sl"],
+      "description": "Slack operations (customize for your workspace)",
+      "url": "https://yourworkspace.slack.com/",
+      "requiresQuery": false,
+      "subcommands": [
+        {
+          "name": "general",
+          "description": "General channel",
+          "url": "https://yourworkspace.slack.com/app_redirect?channel=general",
+          "requiresQuery": false 
+        }
+      ]
+    },
+    {
+      "name": "vscode",
+      "aliases": ["code", "vs"],
+      "description": "Open file/folder in VS Code",
+      "url": "vscode://{{.Query}}",
+      "requiresQuery": false
     }
   ]
 }

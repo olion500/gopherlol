@@ -13,7 +13,7 @@ import (
 func setupTestRegistry() {
 	// Initialize analytics for testing
 	analyticsSystem = analytics.NewAnalytics("test_usage.log")
-	
+
 	testConfig := &config.CommandConfig{
 		Commands: []config.Command{
 			{
