@@ -120,6 +120,24 @@ asdf install golang 1.23.0  # Install Go 1.23.0
 make run                    # Run with latest Go
 ```
 
+#### Using Docker (recommended for production)
+```bash
+# Option 1: Simple Docker run
+make docker-build
+make docker-run
+
+# Option 2: Docker Compose with auto-restart on config changes
+make docker-up
+
+# View logs
+make docker-logs
+
+# Stop services
+make docker-down
+```
+
+**🔥 Auto-restart feature**: When using `make docker-up`, the application automatically restarts whenever you edit `commands.json` - no manual restart needed!
+
 #### Customize Your Commands
 ```bash
 # commands.json is gitignored - safe to customize with your personal/company URLs
@@ -182,11 +200,16 @@ make run
 make help          # Show all available commands
 make usage         # Show browser setup instructions
 
-# Common operations
+# Local development
 make run           # Start the server
 make test          # Run tests
 make build         # Build binary
 make check         # Run format, vet, and tests
+
+# Docker development
+make docker-up     # Start with auto-restart on config changes
+make docker-logs   # View logs
+make docker-down   # Stop services
 ```
 
 ## 🎛️ Built-in Commands
