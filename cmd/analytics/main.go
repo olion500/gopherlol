@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/dominikoh/gopherlol/internal/analytics"
+	"github.com/olion500/gopherlol/internal/analytics"
 )
 
 // ANSI color codes

@@ -8,7 +8,7 @@ A smart bookmarking tool inspired by [Facebook's internal bunnylol](https://www.
 
 [![Go Version](https://img.shields.io/badge/go-1.23.0-blue.svg)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/dominikoh/gopherlol)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/olion500/gopherlol)
 
 </div>
 
@@ -82,7 +82,7 @@ flowchart TD
 
 ```bash
 # Clone and setup
-git clone https://github.com/dominikoh/gopherlol.git
+git clone https://github.com/olion500/gopherlol.git
 cd gopherlol
 
 # Copy sample configuration and customize it
