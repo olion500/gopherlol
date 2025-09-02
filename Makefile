@@ -55,6 +55,14 @@ install-deps: ## install Rust and Tauri dependencies
 run: ## run the application
 	go run .
 
+.PHONY: ui-dev
+ui-dev: ## run UI in development mode
+	cd ui && cargo tauri dev
+
+.PHONY: ui-build
+ui-build: ## build UI application
+	cd ui && cargo tauri build
+
 .PHONY: build
 build: ## build the application
 	go build -o $(NAME) .
