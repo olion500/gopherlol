@@ -1,11 +1,6 @@
 use tauri::{WebviewWindow, Manager};
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
 async fn open_url(url: String) -> Result<(), String> {
     tauri_plugin_opener::open_url(url, None::<&str>).map_err(|e| e.to_string())
 }
@@ -19,7 +14,7 @@ async fn hide_window(window: WebviewWindow) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, open_url, hide_window])
+        .invoke_handler(tauri::generate_handler![open_url, hide_window])
         .setup(|app| {
             #[cfg(desktop)]
             {
@@ -33,6 +28,24 @@ pub fn run() {
                 let shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::Space);
 
                 let app_handle = app.handle().clone();
+
+                // Set up window event listener to hide when focus is lost
+                if let Some(window) = app.get_webview_window("main") {
+                    let app_handle_for_focus = app_handle.clone(); // Clone for the focus handler
+                    window.on_window_event(move |event| {
+                        match event {
+                            tauri::WindowEvent::Focused(focused) => {
+                                if !focused {
+                                    // Window lost focus, hide it
+                                    if let Some(window) = app_handle_for_focus.get_webview_window("main") {
+                                        let _ = window.hide();
+                                    }
+                                }
+                            }
+                            _ => {}
+                        }
+                    });
+                }
 
                 app.handle().plugin(
                     tauri_plugin_global_shortcut::Builder::new()
