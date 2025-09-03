@@ -43,10 +43,25 @@ usage: ## show browser setup instructions
 	@echo "\033[32m✨ Pro tip: Set 'gl' as your keyword for quick access!\033[0m"
 	@echo ""
 
+##@ Dependencies
+.PHONY: install-deps
+install-deps: ## install Rust and Tauri dependencies
+	asdf plugin add rust https://github.com/asdf-community/asdf-rust.git
+	asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
+	asdf install
+
 ##@ Development
 .PHONY: run
 run: ## run the application
 	go run .
+
+.PHONY: ui-dev
+ui-dev: ## run UI in development mode
+	cd ui && cargo tauri dev
+
+.PHONY: ui-build
+ui-build: ## build UI application
+	cd ui && cargo tauri build
 
 .PHONY: build
 build: ## build the application
