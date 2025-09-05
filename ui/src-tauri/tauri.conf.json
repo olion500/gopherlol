@@ -5,7 +5,7 @@
   "identifier": "com.olion500.gopherlol",
   "build": {
     "frontendDist": "../src",
-    "beforeBuildCommand": "cd ../.. && make build"
+    "beforeBuildCommand": ""
   },
   "app": {
     "withGlobalTauri": true,

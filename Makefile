@@ -52,7 +52,11 @@ install-deps: ## install Rust and Tauri dependencies
 
 ##@ Development
 .PHONY: run
-run: ## run the application
+run: ## run the UI application (default)
+	cd ui && cargo tauri dev
+
+.PHONY: run-cli
+run-cli: ## run the CLI server only
 	go run .
 
 .PHONY: ui-dev

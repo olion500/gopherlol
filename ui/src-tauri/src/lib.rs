@@ -1,5 +1,8 @@
-use tauri::{WebviewWindow, Manager};
+use tauri::{WebviewWindow, Manager, AppHandle};
 use std::env;
+use std::process::{Command, Child};
+use std::sync::{Arc, Mutex};
+use tokio::process::Command as TokioCommand;
 
 #[tauri::command]
 async fn open_url(url: String) -> Result<(), String> {
@@ -33,6 +36,16 @@ fn parse_shortcut(shortcut_str: &str) -> Option<(Option<tauri_plugin_global_shor
     Some((modifier, code))
 }
 
+async fn start_go_server() -> Result<tokio::process::Child, std::io::Error> {
+    // Change to the project root directory (two levels up from ui/src-tauri)
+    let mut cmd = TokioCommand::new("go");
+    cmd.arg("run")
+        .arg(".")
+        .current_dir("../..");
+    
+    cmd.spawn()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Load environment variables
@@ -41,6 +54,19 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![open_url, hide_window])
         .setup(|app| {
+            // Start the Go server
+            tauri::async_runtime::spawn(async {
+                match start_go_server().await {
+                    Ok(mut child) => {
+                        println!("Go server started successfully");
+                        // Wait for the child process to complete
+                        let _ = child.wait().await;
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to start Go server: {}", e);
+                    }
+                }
+            });
             #[cfg(desktop)]
             {
                 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
