@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/olion500/gopherlol/internal/analytics"
 	"github.com/olion500/gopherlol/internal/config"
 	"log"
@@ -163,6 +164,17 @@ func generateHelpPage(w http.ResponseWriter) {
 }
 
 func main() {
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: Could not load .env file: %v", err)
+	}
+
+	// Get port from environment or use default
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// Load configuration
 	configFile := "commands.json"
 	commandConfig, err := config.LoadConfig(configFile)
@@ -187,7 +199,7 @@ func main() {
 	// Route handlers
 	http.HandleFunc("/", handler)
 
-	log.Printf("Starting server on :8080")
+	log.Printf("Starting server on :%s", port)
 	log.Printf("View analytics: make analytics")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
