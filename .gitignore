@@ -4,6 +4,9 @@
 commands.json
 usage.log
 
+# llm related files
+!CLAUDE.md
+
 # Build artifacts
 gopherlol
 dist/
