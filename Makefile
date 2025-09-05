@@ -91,10 +91,15 @@ test-verbose: ## run tests with verbose output and coverage
 
 ##@ Code Quality
 .PHONY: check
-check: ## run all checks (format, vet, test with coverage)
+check: ## run all checks (format, vet, test with coverage, Rust compilation)
+	@echo "Running Go checks..."
 	go fmt ./...
 	go vet ./...
 	go test -cover ./...
+	@echo "Running Rust checks..."
+	cd ui/src-tauri && cargo fmt --check
+	cd ui/src-tauri && cargo clippy -- -D warnings
+	cd ui/src-tauri && cargo check
 
 ##@ Analytics
 .PHONY: analytics

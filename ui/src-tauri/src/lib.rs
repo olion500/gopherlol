@@ -1,7 +1,5 @@
-use tauri::{WebviewWindow, Manager, AppHandle};
 use std::env;
-use std::process::{Command, Child};
-use std::sync::{Arc, Mutex};
+use tauri::{Manager, WebviewWindow};
 use tokio::process::Command as TokioCommand;
 
 #[tauri::command]
@@ -14,12 +12,18 @@ async fn hide_window(window: WebviewWindow) -> Result<(), String> {
     window.hide().map_err(|e| e.to_string())
 }
 
-fn parse_shortcut(shortcut_str: &str) -> Option<(Option<tauri_plugin_global_shortcut::Modifiers>, tauri_plugin_global_shortcut::Code)> {
-    let parts: Vec<&str> = shortcut_str.to_lowercase().split('+').collect();
+fn parse_shortcut(
+    shortcut_str: &str,
+) -> Option<(
+    Option<tauri_plugin_global_shortcut::Modifiers>,
+    tauri_plugin_global_shortcut::Code,
+)> {
+    let lowercase = shortcut_str.to_lowercase();
+    let parts: Vec<&str> = lowercase.split('+').collect();
     if parts.len() != 2 {
         return None;
     }
-    
+
     let modifier = match parts[0] {
         "cmd" => Some(tauri_plugin_global_shortcut::Modifiers::META),
         "ctrl" => Some(tauri_plugin_global_shortcut::Modifiers::CONTROL),
@@ -27,22 +31,20 @@ fn parse_shortcut(shortcut_str: &str) -> Option<(Option<tauri_plugin_global_shor
         "shift" => Some(tauri_plugin_global_shortcut::Modifiers::SHIFT),
         _ => return None,
     };
-    
+
     let code = match parts[1] {
         "space" => tauri_plugin_global_shortcut::Code::Space,
         _ => return None,
     };
-    
+
     Some((modifier, code))
 }
 
 async fn start_go_server() -> Result<tokio::process::Child, std::io::Error> {
     // Change to the project root directory (two levels up from ui/src-tauri)
     let mut cmd = TokioCommand::new("go");
-    cmd.arg("run")
-        .arg(".")
-        .current_dir("../..");
-    
+    cmd.arg("run").arg(".").current_dir("../..");
+
     cmd.spawn()
 }
 
@@ -69,7 +71,9 @@ pub fn run() {
             });
             #[cfg(desktop)]
             {
-                use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
+                use tauri_plugin_global_shortcut::{
+                    Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState,
+                };
 
                 // Get shortcut from environment variable or use default
                 let shortcut_str = env::var("SHORTCUT").unwrap_or_else(|_| {
@@ -96,16 +100,15 @@ pub fn run() {
                 if let Some(window) = app.get_webview_window("main") {
                     let app_handle_for_focus = app_handle.clone(); // Clone for the focus handler
                     window.on_window_event(move |event| {
-                        match event {
-                            tauri::WindowEvent::Focused(focused) => {
-                                if !focused {
-                                    // Window lost focus, hide it
-                                    if let Some(window) = app_handle_for_focus.get_webview_window("main") {
-                                        let _ = window.hide();
-                                    }
+                        if let tauri::WindowEvent::Focused(focused) = event {
+                            if !focused {
+                                // Window lost focus, hide it
+                                if let Some(window) =
+                                    app_handle_for_focus.get_webview_window("main")
+                                {
+                                    let _ = window.hide();
                                 }
                             }
-                            _ => {}
                         }
                     });
                 }
@@ -113,7 +116,9 @@ pub fn run() {
                 app.handle().plugin(
                     tauri_plugin_global_shortcut::Builder::new()
                         .with_handler(move |_app, pressed_shortcut, event| {
-                            if pressed_shortcut == &shortcut && event.state() == ShortcutState::Pressed {
+                            if pressed_shortcut == &shortcut
+                                && event.state() == ShortcutState::Pressed
+                            {
                                 if let Some(window) = app_handle.get_webview_window("main") {
                                     let _ = window.show();
                                     let _ = window.set_focus();

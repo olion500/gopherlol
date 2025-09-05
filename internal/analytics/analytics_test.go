@@ -218,10 +218,10 @@ func TestGetTopCommands(t *testing.T) {
 	analytics := NewAnalytics(logFile)
 
 	commandCounts := map[string]int{
-		"google":       5,
+		"google":        5,
 		"stackoverflow": 3,
-		"github":       7,
-		"author":       1,
+		"github":        7,
+		"author":        1,
 	}
 
 	topCommands := analytics.getTopCommands(commandCounts, 2)
@@ -232,12 +232,12 @@ func TestGetTopCommands(t *testing.T) {
 
 	// Should be sorted by count descending
 	if topCommands[0].Command != "github" || topCommands[0].Count != 7 {
-		t.Errorf("Expected first command to be 'github' with count 7, got %q with count %d", 
+		t.Errorf("Expected first command to be 'github' with count 7, got %q with count %d",
 			topCommands[0].Command, topCommands[0].Count)
 	}
 
 	if topCommands[1].Command != "google" || topCommands[1].Count != 5 {
-		t.Errorf("Expected second command to be 'google' with count 5, got %q with count %d", 
+		t.Errorf("Expected second command to be 'google' with count 5, got %q with count %d",
 			topCommands[1].Command, topCommands[1].Count)
 	}
 }
