@@ -52,7 +52,11 @@ install-deps: ## install Rust and Tauri dependencies
 
 ##@ Development
 .PHONY: run
-run: ## run the application
+run: ## run the UI application (default)
+	cd ui && cargo tauri dev
+
+.PHONY: run-cli
+run-cli: ## run the CLI server only
 	go run .
 
 .PHONY: ui-dev
@@ -87,48 +91,22 @@ test-verbose: ## run tests with verbose output and coverage
 
 ##@ Code Quality
 .PHONY: check
-check: ## run all checks (format, vet, test with coverage)
+check: ## run all checks (format, vet, test with coverage, Rust compilation)
+	@echo "Running Go checks..."
 	go fmt ./...
 	go vet ./...
 	go test -cover ./...
+	@echo "Running Rust checks..."
+	cd ui/src-tauri && cargo fmt --check
+	cd ui/src-tauri && cargo clippy -- -D warnings
+	cd ui/src-tauri && cargo check
 
 ##@ Analytics
 .PHONY: analytics
 analytics: ## show command usage analytics (add -overall for all-time stats)
 	@go run cmd/analytics/main.go $(ARGS)
 
-##@ Docker
-.PHONY: docker-build
-docker-build: ## build Docker image
-	docker build -t $(NAME):latest .
 
-.PHONY: docker-run
-docker-run: ## run with Docker (ensure commands.json exists first)
-	@if [ ! -f commands.json ]; then \
-		echo "Creating commands.json from sample..."; \
-		cp commands.json.sample commands.json; \
-	fi
-	docker run --rm -p $(PORT):8080 -v $(PWD)/commands.json:/root/commands.json:ro $(NAME):latest
-
-.PHONY: docker-up
-docker-up: ## start with docker-compose (with file watching)
-	@if [ ! -f commands.json ]; then \
-		echo "Creating commands.json from sample..."; \
-		cp commands.json.sample commands.json; \
-	fi
-	docker-compose up -d
-
-.PHONY: docker-down
-docker-down: ## stop docker-compose services
-	docker-compose down
-
-.PHONY: docker-logs
-docker-logs: ## view docker-compose logs
-	docker-compose logs -f
-
-.PHONY: docker-restart
-docker-restart: ## restart the gopherlol service
-	docker-compose restart gopherlol
 
 ##@ Release
 .PHONY: release-build
